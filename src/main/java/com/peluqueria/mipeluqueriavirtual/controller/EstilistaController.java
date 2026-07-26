@@ -85,6 +85,19 @@ public class EstilistaController {
         return ResponseEntity.ok(toResponse(estilistaRepository.save(estilista)));
     }
 
+    // ── Desactivar estilista (admin) — "eliminar" logico ──────────────────────
+    @PutMapping("/{id}/desactivar")
+    public ResponseEntity<?> desactivar(@PathVariable Long id) {
+        return estilistaRepository.findById(id).map(estilista -> {
+            Usuario usuario = estilista.getUsuario();
+            usuario.setActivo(false);
+            usuarioRepository.save(usuario);
+            estilista.setDisponible(false);
+            estilistaRepository.save(estilista);
+            return ResponseEntity.ok(toResponse(estilista));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
     // ── Agenda del día — recibe estilistaId ───────────────────────────
 
     @GetMapping("/agenda/dia")

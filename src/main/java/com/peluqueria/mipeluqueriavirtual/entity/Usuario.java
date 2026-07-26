@@ -27,6 +27,9 @@ public class Usuario {
  
     @Column(length = 20)
     private String telefono;
+    
+    @Column(name = "whatsapp", length = 20)
+    private String whatsapp;
  
     @Column(name = "foto_perfil", columnDefinition = "TEXT")
     private String fotoPerfil;
@@ -65,6 +68,9 @@ public class Usuario {
  
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }
+    
+    public String getWhatsapp() { return whatsapp; }
+    public void setWhatsapp(String whatsapp) { this.whatsapp = whatsapp; }
  
     public String getFotoPerfil() { return fotoPerfil; }
     public void setFotoPerfil(String fotoPerfil) { this.fotoPerfil = fotoPerfil; }

@@ -2,6 +2,7 @@ package com.peluqueria.mipeluqueriavirtual.controller;
  
 import com.peluqueria.mipeluqueriavirtual.entity.*;
 import com.peluqueria.mipeluqueriavirtual.repository.*;
+import com.peluqueria.mipeluqueriavirtual.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class CitaController {
     @Autowired private EstilistaRepository estilistaRepository;
     @Autowired private ServicioRepository servicioRepository;
     @Autowired private PagoRepository pagoRepository;
+    @Autowired private EmailService emailService;
 
     @GetMapping
     public List<Map<String, Object>> listar() {
@@ -68,6 +70,8 @@ public class CitaController {
             pago.setMonto(guardada.getTotal());
             pago.setReferencia("CITA-" + guardada.getId());
             pagoRepository.save(pago);
+
+            emailService.enviarConfirmacionCita(guardada);
 
             return ResponseEntity.ok(toResponse(guardada));
         } catch (Exception e) {

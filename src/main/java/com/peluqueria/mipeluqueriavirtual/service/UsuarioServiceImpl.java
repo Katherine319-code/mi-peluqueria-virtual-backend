@@ -63,6 +63,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         existente.setApellido(usuario.getApellido());
         existente.setCorreo(usuario.getCorreo());
         existente.setTelefono(usuario.getTelefono());
+        existente.setWhatsapp(usuario.getWhatsapp());
         existente.setFotoPerfil(usuario.getFotoPerfil());
         existente.setRol(Rol.CLIENTE);
         if (usuario.getProveedorAuth() != null && !usuario.getProveedorAuth().isBlank()) {
