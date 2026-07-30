@@ -8,6 +8,7 @@ import com.peluqueria.mipeluqueriavirtual.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -47,6 +48,28 @@ public class AuthController {
             return ResponseEntity.ok(res);
         } catch (RuntimeException e) {
             return ResponseEntity.status(401).body(e.getMessage());
+        }
+    }
+    
+ // POST /api/auth/olvide-password
+    @PostMapping("/olvide-password")
+    public ResponseEntity<?> olvidePassword(@RequestBody Map<String, String> body) {
+        try {
+            authService.solicitarRecuperacion(body.get("correo"));
+            return ResponseEntity.ok("Codigo enviado al correo");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // POST /api/auth/restablecer-password
+    @PostMapping("/restablecer-password")
+    public ResponseEntity<?> restablecerPassword(@RequestBody Map<String, String> body) {
+        try {
+            authService.restablecerPassword(body.get("correo"), body.get("codigo"), body.get("nuevaPassword"));
+            return ResponseEntity.ok("Contrasena actualizada correctamente");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

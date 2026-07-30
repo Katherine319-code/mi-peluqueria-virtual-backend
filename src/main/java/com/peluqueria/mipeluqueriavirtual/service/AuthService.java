@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import com.peluqueria.mipeluqueriavirtual.service.EmailService;
 
 import java.util.Map;
 import java.util.UUID;
@@ -26,6 +29,9 @@ public class AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailService emailService;
 
     @Value("${google.client.id}")
     private String googleClientId;
@@ -114,4 +120,41 @@ public class AuthService {
         return new AuthResponse(token, usuario.getId(), usuario.getCorreo(),
                 usuario.getNombre(), usuario.getApellido(), usuario.getRol().name());
     }
+
+    private final SecureRandom random = new SecureRandom();
+
+    public void solicitarRecuperacion(String correo) {
+        Usuario usuario = usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new RuntimeException("No existe una cuenta con ese correo"));
+
+        if (usuario.getRol() != Rol.CLIENTE) {
+            throw new RuntimeException("La recuperacion de contrasena solo esta disponible para clientes");
+        }
+
+        String codigo = String.format("%06d", random.nextInt(1_000_000));
+        usuario.setResetCodigo(codigo);
+        usuario.setResetExpiracion(LocalDateTime.now().plusMinutes(15));
+        usuarioRepository.save(usuario);
+
+        emailService.enviarCodigoRecuperacion(usuario.getCorreo(), usuario.getNombre(), codigo);
+    }
+
+    public void restablecerPassword(String correo, String codigo, String nuevaPassword) {
+        Usuario usuario = usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new RuntimeException("No existe una cuenta con ese correo"));
+
+        if (usuario.getResetCodigo() == null || !usuario.getResetCodigo().equals(codigo)) {
+            throw new RuntimeException("Codigo invalido");
+        }
+        if (usuario.getResetExpiracion() == null || usuario.getResetExpiracion().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("El codigo ha expirado, solicita uno nuevo");
+        }
+
+        usuario.setPassword(passwordEncoder.encode(nuevaPassword));
+        usuario.setResetCodigo(null);
+        usuario.setResetExpiracion(null);
+        usuarioRepository.save(usuario);
+    }
+
+
 }

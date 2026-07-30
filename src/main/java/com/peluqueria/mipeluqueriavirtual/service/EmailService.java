@@ -52,4 +52,29 @@ public class EmailService {
             System.err.println("No se pudo enviar el correo de confirmacion: " + e.getMessage());
         }
     }
+
+    public void enviarCodigoRecuperacion(String correo, String nombre, String codigo) {
+        String asunto = "Recuperacion de contrasena - Mi Peluqueria Virtual";
+        String cuerpo = "Hola " + nombre + ",\n\n"
+                + "Recibimos una solicitud para restablecer tu contrasena.\n\n"
+                + "Tu codigo de verificacion es: " + codigo + "\n\n"
+                + "Este codigo es valido por 15 minutos. Si no solicitaste este cambio, "
+                + "puedes ignorar este correo con confianza.\n\n"
+                + "Mi Peluqueria Virtual";
+
+        SimpleMailMessage mensaje = new SimpleMailMessage();
+        mensaje.setTo(correo);
+        mensaje.setSubject(asunto);
+        mensaje.setText(cuerpo);
+
+        try {
+            mailSender.send(mensaje);
+        } catch (Exception e) {
+            System.err.println("No se pudo enviar el correo de recuperacion: " + e.getMessage());
+        }
+    }
+
 }
+
+
+

@@ -46,6 +46,12 @@ public class Usuario {
  
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion = LocalDateTime.now();
+    
+    @Column(name = "reset_codigo", length = 10)
+    private String resetCodigo;
+
+    @Column(name = "reset_expiracion")
+    private java.time.LocalDateTime resetExpiracion;
  
     public Usuario() {}
  
@@ -86,4 +92,10 @@ public class Usuario {
  
     public LocalDateTime getFechaCreacion() { return fechaCreacion; }
     public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+
+    public String getResetCodigo() { return resetCodigo; }
+    public void setResetCodigo(String resetCodigo) { this.resetCodigo = resetCodigo; }
+
+    public java.time.LocalDateTime getResetExpiracion() { return resetExpiracion; }
+    public void setResetExpiracion(java.time.LocalDateTime resetExpiracion) { this.resetExpiracion = resetExpiracion; }
 }
